@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Scanner - Handwritten & Printed Text Recognition</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="url(#gradient)"/>
+                    <path d="M12 15h16M12 20h16M12 25h10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="100%" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>Document Scanner</h1>
+            </div>
+            <div class="header-stats" id="stats">
+                <div class="stat-item">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Processed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">0%</span>
+                    <span class="stat-label">Accuracy</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-card">
+                    <div class="upload-icon">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                            <circle cx="32" cy="32" r="32" fill="#f0f4ff"/>
+                            <path d="M32 20v24M20 32h24" stroke="#667eea" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h2>Upload Documents</h2>
+                    <p>Drag and drop your documents here, or click to browse</p>
+                    <p class="supported-formats">Supported: JPG, PNG, TIFF, PDF</p>
+                    
+                    <div class="drop-zone" id="dropZone">
+                        <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.tiff,.tif,.bmp,.pdf" hidden>
+                        <div class="drop-zone-content">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                <path d="M24 8v24M14 22l10-10 10 10" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 32v8a4 4 0 004 4h24a4 4 0 004-4v-8" stroke="#667eea" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <p><strong>Drop files here</strong> or click to upload</p>
+                        </div>
+                    </div>
+
+                    <div class="file-list" id="fileList"></div>
+
+                    <div class="upload-actions">
+                        <button class="btn btn-secondary" id="clearBtn" disabled>Clear All</button>
+                        <button class="btn btn-primary" id="processBtn" disabled>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 4v12M4 10h12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Process Documents
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Processing Status -->
+            <section class="status-section" id="statusSection" style="display: none;">
+                <div class="status-card">
+                    <div class="status-header">
+                        <h3>Processing...</h3>
+                        <div class="spinner"></div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="status-text" id="statusText">Initializing OCR engines...</p>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2>Extraction Results</h2>
+                    <div class="results-actions">
+                        <button class="btn btn-outline" id="exportJsonBtn">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 2v10M4 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Export JSON
+                        </button>
+                        <button class="btn btn-outline" id="exportCsvBtn">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 2v10M4 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="results-grid" id="resultsGrid"></div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by Multi-Engine OCR (Tesseract + EasyOCR + PaddleOCR)</p>
+            <p class="footer-links">
+                <a href="#" id="aboutLink">About</a>
+                <span>•</span>
+                <a href="#" id="helpLink">Help</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Result Detail Modal -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Document Details</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

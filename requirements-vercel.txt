@@ -1,0 +1,21 @@
+# Vercel-specific requirements (lightweight for serverless)
+flask==3.0.0
+flask-cors==4.0.0
+
+# Image Processing (essential only)
+Pillow==10.1.0
+numpy==1.26.2
+
+# OCR - Tesseract only (lighter than EasyOCR/PaddleOCR)
+pytesseract==0.3.10
+
+# PDF Processing
+PyPDF2==3.0.1
+
+# Utilities
+python-dateutil==2.8.2
+regex==2023.10.3
+
+# Note: For Vercel deployment, we use only Tesseract OCR
+# EasyOCR and PaddleOCR are too large for serverless functions
+# If you need those, consider using a separate microservice
