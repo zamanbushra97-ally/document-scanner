@@ -1,0 +1,4 @@
+# Vercel Deployment - Static Only
+
+api/
+requirements-vercel.txt
